@@ -10,12 +10,14 @@ import WelcomeNoUser from './Components/WelcomeNoUser';
 import WelcomeUser from './Components/WelcomeUser';
 import SetUserId from './Components/SetUserId';
 import DisplayBalance from './Components/DisplayBalance';
+import Chain from './Components/Chain';
 
 function App() {
   const [user, setUser] = useState(null);
   const [chain, setChain] = useState({});
   const [balance, setBalance] = useState([]);
-  let balance_array = [];
+  const [transactions, setTransactions] = useState([]);
+
   useEffect(() => {
     axios
       .get('http://localhost:5000/chain')
@@ -23,12 +25,10 @@ function App() {
         let chain = res.data.chain;
         setChain(chain);
         for (let i of chain) {
-          debugger;
           for (let j of i.transactions) {
             if (j.recipient === user) {
+              setTransactions(transactions => [...transactions, j])
               console.log(j.amount);
-              // let new_array = [...balance_array, j.amount]
-              debugger;
               setBalance(balance => [...balance, j.amount]);
             }
           }
@@ -50,6 +50,7 @@ function App() {
       <>
         <WelcomeUser user={user} />
         <DisplayBalance balance={balance} />
+        <Chain transactions={transactions} />
       </>
     );
   }
